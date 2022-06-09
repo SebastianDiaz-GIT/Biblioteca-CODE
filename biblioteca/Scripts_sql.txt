@@ -1,0 +1,309 @@
+-------Integrantes----------
+
+-------Jose Manuel Camargo----------
+-------Juan Esteban Pavas----------
+-------Sebastian Diaz----------
+-------Jose Simon Atehortua----------
+-------Jose David Valencia----------
+
+-----------------BD Iniciales-------------------------
+create table autor(
+    id_autor smallint not null Primary Key,
+    nombre varchar(50),
+    nacionalidad varchar(50)
+);
+
+create table estudiante(
+    id_lector smallint not null Primary Key,
+    ci text,
+    nombre text,
+    carrera smallint ,
+    direccion text,
+    edad smallint
+);
+create table libro(
+    id_libro smallint not null Primary Key,
+    titulo text,
+    area smallint,
+    editorial smallint
+);
+create table libaut(
+    id_autor smallint not null references autor,
+    id_libro smallint not null references libro
+    Primary Key (id_autor, id_libro)
+);
+
+------------------Arreglos Base de Datos---------------
+create table categorias(
+	id_cat int not null Primary Key,
+	nombre varchar(59),
+	valor_multa_dia int,
+);
+
+alter table libro
+add id_cat int references categorias
+
+alter table categorias
+add dias_prestamo smallint
+
+create table editorial(
+	id_ed int not null Primary Key,
+	nombre_ed varchar(50),
+);
+
+create table area(
+	id_area smallint not null Primary Key,
+	nombre_area varchar(30),
+);
+alter table libro
+drop column area
+
+alter table libro
+add id_ed int references editorial
+
+alter table libro
+ add id_area smallint references area
+
+create table carrera(
+	id_ca int not null Primary Key,
+	nombre_ca varchar(50),
+);
+
+alter table estudiante
+add id_ca int references carrera
+
+create table prestamo(
+	id_prestamo smallint not null Primary Key,
+	id_libro smallint not null references libro,
+	id_lector smallint not null references estudiante,
+	fecha_prestamo date not null,
+	fecha_entrega date,
+	fecha_limite date not null
+);
+
+create table multas(
+	id_prestamo smallint not null references prestamo,
+	id_libro smallint not null references libro,
+	id_lector smallint not null references estudiante,
+	fecha_pago date,
+	estado_pago bit,
+	valor_pago int
+);
+
+alter table estudiante
+drop column carrera;
+alter table libro
+drop column editorial;
+alter table libro
+alter column titulo varchar(50);
+alter table estudiante 
+alter column nombre varchar(60);
+alter table estudiante 
+alter column direccion varchar(60);
+alter table estudiante
+alter column ci varchar(15);
+
+insert into categorias (id_cat, nombre, valor_multa_dia) values (1,'Categoria 1',2500);
+insert into categorias (id_cat, nombre, valor_multa_dia) values (2,'Categoria 2',3500);
+insert into categorias (id_cat, nombre, valor_multa_dia) values (3,'Categoria 3',9990);
+
+UPDATE categorias
+SET dias_prestamo = 10
+where id_cat =1;
+UPDATE categorias
+SET dias_prestamo = 10
+where id_cat =2;
+UPDATE categorias
+SET dias_prestamo = 10
+where id_cat =3;
+
+--------------------------------Consultas--------------------------------------------------------------------------
+--1. Generar una tabla con la informacion de cada material, enlazada a otra tabla con la informacion de cada editorial existente
+
+select *
+from libro as l
+full join editorial as e
+on l.id_ed = e.id_ed
+
+--2. Generar una tabla con la informacion de cada usuario, enlazada a otra tabla con la informacion de cada carrera
+
+select *
+from estudiante as e
+full join carrera c
+on e.id_ca = c.id_ca
+
+--3. El sistema debe identificar que areas tienen menos material
+
+  select top(5) id_area, count(*) as 'Cantidad libros', (
+ select (a.nombre_area)
+ from area as a
+ where l.id_area = a.id_area) as 'Nombre'
+from libro as l
+  group by	id_area
+  order by 2asc
+
+--4. conuslta la cantidad de libros por cada area
+
+select id_area, count(*) as 'Libros por Area', (
+ select (a.nombre_area)
+ from area as a
+ where l.id_area = a.id_area) as 'Nombre'
+  from libro as l
+  group by	id_area
+
+--5. Se consulta por los esudiantes con mayor cantidad de prestamos
+
+select top(5) e.nombre as 'Nombre' , count(*) as 'Cantidad de Prestamos'
+from estudiante as e,
+	prestamo as p
+where e.id_lector = p.id_lector
+group by nombre
+order by 2desc
+
+--6. La bblioteca podrá visualizar la cantidad de usuarios que no han entregado el material
+
+select count(distinct p.id_lector) as 'Cantidad de Usuarios'
+from estudiante as e, 
+	prestamo as p
+where fecha_entrega IS Null;
+
+
+--7. Listar la totalidad de multas que aun no han sido pagadas
+
+select m.*, (select nombre from estudiante as e
+where e.id_lector = m.id_lector) as 'Nombre'
+from multas as m
+where estado_pago = 0;
+
+--Listar la totalidad de multas que han sido pagadas
+
+select m.*, (select nombre from estudiante as e
+where e.id_lector = m.id_lector) as 'Nombre'
+from multas as m
+where estado_pago = 1;
+
+--Listar todas las multas
+
+select m.*, (select nombre from estudiante as e
+where e.id_lector = m.id_lector) as 'Nombre'
+from multas as m
+
+------------------------------Inserts---------------------------------------------------
+
+-------------------------------Carrera---------------
+insert into carrera values (1,'Sistemas');
+insert into carrera values( 2, 'Medicina');
+insert into carrera values (3,'Administracion');
+insert into carrera values( 4, 'Derecho');
+insert into carrera values (5,'Mecanica');
+insert into carrera values( 6, 'Biologia');
+insert into carrera values (7,'Diseño');
+insert into carrera values( 8, 'Artes');
+insert into carrera values (9,'Filosofia');
+insert into carrera values( 10, 'Negocios');
+
+-------------------------------Autor---------------
+insert into autor values (100,'Jorge Luis Borges','ARG');
+insert into autor values( 200, 'Lewis Carroll','GRB');
+insert into autor values( 300,'Adrian Paenza','ARG'); 
+insert into autor values( 400,'Jose hernandez','ARG');
+insert into autor values( 500, 'Mª Nieves Navas Martinez','COL');
+insert into autor values( 600,'Juan carlos oros cabello','ESP');
+insert into autor values( 700, 'Eduardo Gamero Casado','ESP');
+insert into autor values( 705, 'Severiano Fernández Ramos','ARG');
+insert into autor values( 710,'Mark Matthews','USA');
+insert into autor values( 720,'Francisco Javier Bermal','COL');
+insert into autor values( 510,'Thomas M. Connolly','USA');
+insert into autor values( 520,' S. Sudarshan', 'USA');
+insert into autor values( 530,'  Abraham Silberschatz', 'USA');
+insert into autor values( 540,'  Jérôme Gabillaud','FRA');
+insert into autor values( 900, ' CEBALLOS FCO.JAVIER', 'ESP');
+insert into autor (id_autor, nombre) values( 1000, ' TecnoBook')
+
+-----------------------Editorial-----------------
+insert into editorial values (1,'Planeta');
+insert into editorial values( 2,'Pre-textos');
+insert into editorial values( 3,'Sexto Piso');
+insert into editorial values( 4,'Acantilado');
+insert into editorial values( 5,'Nórdica');
+insert into editorial values( 6,'De Conatus');
+insert into editorial values( 7,'Cabaret Voltaire');
+insert into editorial values( 8,'Pirámides');
+
+--------------------------Estudiante---------------
+Insert into estudiante values(323,'CC-7175822','Moises Alejandro Pérez','CALLE 18 N25 30',10,3);
+insert into estudiante  values(234,'TI-48987599','America Maria Gómez',NULL,1,6 );
+insert into estudiante  values(678,'CE-AER52000','Javier Adrian Serrano',NULL ,2,7 );
+insert into estudiante  values(921,'CC-369871', 'JUAN RAFAEL LOZANO',NULL,1,8);
+insert into estudiante  values(213,'TI-300785070','Melissa Mendoza Palacios',NULL,1, 2 );
+insert into estudiante  values(1,'TI-300785070','Jose Manuel Camargo',NULL,1, 1 );
+insert into estudiante  values(2,'TI-300785070','Juan Esteban Pavas',NULL,1, 1 );
+insert into estudiante  values(3,'TI-300785070','Sebastian Diaz',NULL,1, 1 );
+insert into estudiante  values(4,'TI-300785070','Jose Simon Atehortua',NULL,1, 1 );
+insert into estudiante  values(5,'TI-300785070','Jose David Valencia',NULL,1, 1 );
+
+--------------------------Areas-------------------
+insert into area values(1,'Cuentos');
+insert into area values(2,'Poema');
+insert into area values(3,'Computacion');
+insert into area values(4,'Diseño');
+insert into area values(5,'Programacion');
+insert into area values(6,'Derecho');
+
+--------------------------Libros------------------
+insert into libro values (1,'El Aleph', 1, 5, 1);
+insert into libro values (2,'Alicia en el pais de las maravillas', 1, 1, 1);
+insert into libro values (3,'Matematica estas ahi', 1, 3, 1);
+insert into libro values (4,'Martin Fierro', 2, 1, 2);
+insert into libro values (5,'Martin Fierro', 2, 1, 2);
+insert into libro values (6, 'Diseño de Pagina Web con XHTML, JavaScript y CSS', 3, 6, 3);
+insert into libro values (7, 'Programación de graficos 3D', 2, 6, 4);
+insert into libro values (8, 'MySQl y JAVA', 3, 6, 5);
+insert into libro values (9, 'Manual básico de derecho administrativo', 3, 7, 6);
+insert into libro values (10, 'Sistema Juridico de administración publica', 3, 7, 6);
+insert into libro values (11, 'Derecha administrativo 1ra Ed.', 2, 7,6);
+insert into libro values (12, 'Derecho administrativo 2da Ed.', 2, 7, 6);
+insert into libro values (13, 'Sistemas de bases de datos', 3, 6, 3);
+insert into libro values (14, 'Fundamentos de diseño de bases de datos', 3, 6, 3);
+insert into libro values (15, 'SQL Server 2008', 2, 6, 3);
+insert into libro values (16, 'Microsoft Visual Basic.Net', 2, 6, 3);
+insert into libro values (17, '3d Studio Max', 1, 8, 4);
+
+--------------------------Liaut------------------
+insert into libaut values(100,1);
+insert into libaut values(200,2);
+insert into libaut values(300,3);
+insert into libaut values(400,4);
+insert into libaut values(400,5);
+insert into libaut values(500,6);
+insert into libaut values(600,6);
+insert into libaut values(500,7);
+insert into libaut values(600,7);
+insert into libaut values(710,8);
+insert into libaut values(700,9);
+insert into libaut values(705,9);
+insert into libaut values(720,10);
+insert into libaut values(720,11);
+insert into libaut values(720,12);
+insert into libaut values(510,13);
+insert into libaut values(520,14);
+insert into libaut values(530,14);
+insert into libaut values(540,15);
+insert into libaut values(900,16);
+insert into libaut values(600,17);
+
+-----------------------Prestamo-----------
+insert into prestamo values (1, 14, 234, '2022-06-05', NULL, '2022-07-05' );
+insert into prestamo values (2, 8, 678, '2022-06-05', NULL, '2022-07-05');
+insert into prestamo values (3, 5, 323, '2022-03-18', '2022-04-10', '2022-04-08');
+insert into prestamo values (4, 3, 921, '2022-04-20', '2022-05-15', '2022-05-10');
+insert into prestamo values (5, 2, 1, '2022-06-05', NULL, '2022-06-15');
+insert into prestamo values (6, 6, 234, '2022-04-20', '2022-05-05', '2022-05-10');
+insert into prestamo values (7, 11, 4, '2022-06-05', NULL, '2022-06-25');
+insert into prestamo values (8, 12, 4, '2022-06-05', NULL, '2022-06-25');
+insert into prestamo values (9, 2, 5, '2022-03-18', '2022-04-06', '2022-04-08');
+insert into prestamo values (10, 16, 3, '2022-06-05', NULL, '2022-06-15');
+
+------------------------Multas-------------
+insert into multas values (3, 5, 323, NULL, 0, NULL);
+insert into multas values (4, 3, 921, '2022-05-15', 1, 12500);
