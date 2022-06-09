@@ -40,7 +40,7 @@ def newUser():
         cursor.execute("select * from libro as l full join editorial as e on l.id_ed = e.id_ed")
         row = cursor.fetchall()
         for i in row:
-            print(i)
+            print(row[1])
 
         """
         #INSERTAR DATOS A UNA TABLA
