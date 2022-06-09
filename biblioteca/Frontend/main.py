@@ -5,7 +5,7 @@ from re import I
 from tkinter import *
 from tkinter import messagebox
 from turtle import heading, width
-from numpy import var
+from numpy import pad, place, var
 import pyodbc
 
 from matplotlib.pyplot import get, text
@@ -86,51 +86,53 @@ def register():
 
     global register_window 
     register_window = Tk()
+    register_window.title('Registro de Estudiante')
     register_window.geometry('640x480')
+    register_window.config(background='#86bbbd')
     register_main = Frame(register_window)
-    register_main.config(width=640, height=480)
+    register_main.config(width=640, height=480, bg='#6a6b83')
     root.destroy()
 
-    register_tittle = Label(register_window, text="REGISTRAR USUARIOS", font=('Arial', 20, 'bold'))
+    register_tittle = Label(register_window, text="REGISTRAR USUARIOS", font=('Arial', 20, 'bold'),bg='#86bbbd')
     register_tittle.grid(column=0, row=0, padx=150, pady=10, columnspan=2)
 
     #NOMBRE 
-    register_user = Label(register_window, text="Nombre : ")
+    register_user = Label(register_window, text="Nombre : ", bg='#86bbbd')
     register_user.grid(column=0, row=1)
 
     nombre = Entry(register_window, textvariable=nombre)
     nombre.grid(column=0, row=1, padx= 150, columnspan=2)
 
     #IDENTIFICADOR DEL LECTOR
-    register_ID = Label(register_window, text="ID Lector : ")
+    register_ID = Label(register_window, text="ID Lector : ", bg='#86bbbd')
     register_ID.grid(column=0, row=2)
 
     newID = Entry(register_window, textvariable=newID)
     newID.grid(column=0, row=2, padx= 150, columnspan=2)
 
     #NUMERO DE IDENTIFICACION
-    register_CI = Label(register_window, text="Identificacion : ")
+    register_CI = Label(register_window, text="Identificacion : ", bg='#86bbbd')
     register_CI.grid(column=0, row=3)
 
     newCI = Entry(register_window, textvariable=newCI)
     newCI.grid(column=0, row=3, padx= 150, columnspan=2)
 
     #DIRECCION
-    register_address = Label(register_window, text="Direccion : ")
+    register_address = Label(register_window, text="Direccion : ", bg='#86bbbd')
     register_address.grid(column=0, row=4)
 
     newaddress = Entry(register_window, textvariable=newaddress)
     newaddress.grid(column=0, row=4, padx= 150, columnspan=2)
 
     #EDAD
-    register_age = Label(register_window, text="Edad : ")
+    register_age = Label(register_window, text="Edad : ", bg='#86bbbd')
     register_age.grid(column=0, row=5)
 
     edad = Entry(register_window, textvariable=edad)
     edad.grid(column=0, row=5, padx= 150, columnspan=2)
 
     #ID_CARRERA
-    register_ID_CA = Label(register_window, text="ID_Carrera : ")
+    register_ID_CA = Label(register_window, text="ID_Carrera : ", bg='#86bbbd')
     register_ID_CA.grid(column=0, row=6)
 
     id_carrera = Entry(register_window, textvariable=id_carrera)
@@ -277,8 +279,9 @@ def consultas():
     global consultas_sql
     consultas_sql = Tk()
     consultas_sql.geometry('1000x600')
+    consultas_sql.config(bg='#86bbbd')
     consultas_sql_main = Frame(consultas_sql)
-    consultas_sql_main.config(width=640, height=480)
+    consultas_sql_main.config(width=640, height=480, bg='#5f506b')
 
     #Material x Categoria
     MxC = Button(consultas_sql_main, text="Material x Categoria", command=material_x_categoria)
@@ -319,7 +322,7 @@ def consultas():
     lista_data.grid(column=1, row=7)
     lista_data.config(width=80, height=20)
 
-    consultas_sql_main.pack()
+    consultas_sql_main.pack(padx=10, pady=10)
 
 def alertdelete():
     messagebox.showinfo(title='BORRADO CON EXITO', message='El estudiante a sido eliminado con exito!')
@@ -330,19 +333,20 @@ def deleteuser():
     root.destroy()
     deleteUser = Tk()
     deleteUser.geometry('640x480')
+    deleteUser.config(background='#86bbbd')
 
     deleteFrame = Frame(deleteUser)
-    deleteFrame.config(width=640, height=480) #tamaño del frame y color
+    deleteFrame.config(width=640, height=480, bg='#6a6b83') #tamaño del frame y color
 
 
-    tittle3 = Label(deleteFrame, text="Eliminar estudiante", font=("Arial", 24))
+    tittle3 = Label(deleteFrame, text="Eliminar estudiante", font=("Arial", 24), bg='#6a6b83')
     tittle3.grid(column=0, row=0, padx=10, pady=10, columnspan=2)
 
     global user_id 
-    user_id = Entry(deleteFrame, font=("Arial", 15))
+    user_id = Entry(deleteFrame, font=("Arial", 15), width=10)
     user_id.grid(column=1, row=1)
 
-    info = Label(deleteFrame, text="Digitar ID del estudiante: ") 
+    info = Label(deleteFrame, text="Digitar ID del estudiante: ", bg='#6a6b83') 
     info.grid(column=0, row=1)
 
     Borrar = Button(deleteFrame, text="Borrar Usuario", command=delete_command)
@@ -353,7 +357,7 @@ def deleteuser():
     exit2.grid(column=1, row=3, ipadx=1, ipady=1, padx=10, pady=10)
     exit2.config(width=20, height=1)
 
-    deleteFrame.pack()
+    deleteFrame.pack(padx=60, pady=60)
 
 def delete_command():
         connection = pyodbc.connect('DRIVER={SQL Server};SERVER=DESKTOP-8CFL0C7\SQLEXPRESS;DATABASE=proyecto;UID=PyProyect;PWD=sebas')
@@ -367,6 +371,7 @@ def MenuStart():
     global root 
     root = Tk()
     root.geometry('640x480')
+    root.config(bg='#86bbbd')
 
     global userName 
     userName = StringVar()
@@ -374,22 +379,22 @@ def MenuStart():
 
         #mainframe
     mainFrame = Frame(root)
-    mainFrame.config(width=640, height=480) #tamaño del frame y color
+    mainFrame.config(width=640, height=480, bg='#6a6b83') #tamaño del frame y color
 
-    titulo = Label(mainFrame, text="Login de Usuarios", font=("Arial", 24))
-    titulo.grid(column=0, row=0, padx=10, pady=10, columnspan=2)
+    titulo = Label(mainFrame, text="Login \n de \n Estudiantes", font=("Arial", 18), bg='#6a6b83')
+    titulo.grid(column=1, padx=5, pady=5, columnspan=2)
 
 
         #Labels login
-    userLabel = Label(mainFrame, text="Usuario: ") 
+    userLabel = Label(mainFrame, text="Usuario: ",font=("Arial", 13) ,bg='#6a6b83') 
     userLabel.grid(column=0, row=1)
-    passLabel = Label(mainFrame, text="Contraseña: ")
+    passLabel = Label(mainFrame, text="Contraseña: ",font=("Arial", 13), bg='#6a6b83')
     passLabel.grid(column=0, row=2)
 
         #Entradas de texto para las contraseñas
     global userEntry 
     userEntry = Entry(mainFrame, textvariable=userName)
-    userEntry.grid(column=1, row=1)
+    userEntry.grid(column=1, row=1, padx=5, pady=5)
 
     global userPass 
     userPass = StringVar()
@@ -408,8 +413,8 @@ def MenuStart():
     DeleteButton = Button(mainFrame, text="Borrar Usuario", command=deleteuser)
     DeleteButton.grid(column=3, row=3, ipadx=5, ipady=5, padx=10, pady=10)
     DeleteButton.config(width=10, height=1)
-
-    mainFrame.pack()
+    
+    mainFrame.pack(padx=100, pady=100)
     root.mainloop()
 MenuStart()
 
