@@ -15,11 +15,14 @@ class Usuarios():
         self.intentos = 3
 
     #Iniciar sesion pasando parametro de la base de datos
-    def Iniciar_Sesion(self, passDB):
+    def Iniciar_Sesion(self, passDB, passuser=None):
         self.passDB = int(passDB)
         print(self.passDB)
-        myPassword = int(input("Ingrese su contraseña: "))
-        
+        if passuser == None:
+            myPassword = int(input("Ingrese su contraseña: "))
+        else:
+            myPassword = passuser
+
         if myPassword == self.passDB:
             print("Sesion Iniciada con exito")
         else:
@@ -28,9 +31,9 @@ class Usuarios():
             print("intentos restantes: ", self.intentos)
 
     #CONEXION A LA BASE DE DATOS
-    def ConexionBD(self):
-        myUser = input("ingresa tu usuario: ")
+    def ConexionBD(self, usermain):
 
+        myUser = usermain
         try:
             connection = pyodbc.connect('DRIVER={SQL Server};SERVER=DESKTOP-8CFL0C7\SQLEXPRESS;DATABASE=TestTB;UID=py;PWD=sebas')
             # connection = pyodbc.connect('DRIVER={SQL Server};SERVER=USKOKRUM2010;DATABASE=django_api;Trusted_Connection=yes;')
@@ -44,25 +47,13 @@ class Usuarios():
 
             password = row[1]
             print(password)
-            user1.Iniciar_Sesion(password)
+            user1.Iniciar_Sesion(password, None)
 
         except Exception as ex:
             print("Error durante la conexión: {}".format(ex))
         finally:
             connection.close()  # Se cerró la conexión a la BD.
             print("La conexión ha finalizado.")
-
-    """
-    def Iniciar_Sesion(self):
-        myPassword = input("Ingrese su contraseña: ")
-        
-        if myPassword == self.password:
-            print("Sesion Iniciada con exito")
-        else:
-            self.intentos -=1
-            print("contraseña incorrecta...")
-            print("intentos restantes: ", self.intentos)
-    """
 
     def Desconectar(self):
         if self.conectado:
